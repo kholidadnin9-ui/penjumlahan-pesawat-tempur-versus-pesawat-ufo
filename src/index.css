@@ -1,0 +1,348 @@
+@import "tailwindcss";
+
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  background: #030014;
+  color: white;
+  overflow: hidden;
+  user-select: none;
+}
+.font-orb { font-family: 'Orbitron', 'Fredoka', sans-serif; }
+
+/* Starfield (moving right => ships flying left) */
+.space-bg {
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(124, 58, 237, .35), transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(14, 165, 233, .25), transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(236, 72, 153, .2), transparent 50%),
+    #030014;
+}
+.stars {
+  position: absolute; inset: 0; pointer-events: none;
+  background-repeat: repeat;
+}
+.stars.s1 {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+    radial-gradient(1px 1px at 120px 80px, #cbd5e1, transparent),
+    radial-gradient(1.5px 1.5px at 200px 150px, #fff, transparent),
+    radial-gradient(1px 1px at 300px 40px, #e0e7ff, transparent),
+    radial-gradient(1px 1px at 380px 190px, #fff, transparent);
+  background-size: 400px 220px;
+  animation: starsMove 14s linear infinite;
+}
+.stars.s2 {
+  background-image:
+    radial-gradient(2px 2px at 60px 120px, #fff, transparent),
+    radial-gradient(2px 2px at 260px 60px, #fde68a, transparent),
+    radial-gradient(1.5px 1.5px at 420px 200px, #a5f3fc, transparent);
+  background-size: 500px 260px;
+  animation: starsMove2 6s linear infinite;
+}
+@keyframes starsMove { from { background-position: 0 0; } to { background-position: 400px 0; } }
+@keyframes starsMove2 { from { background-position: 0 0; } to { background-position: 500px 0; } }
+
+.streak {
+  position: absolute; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.7));
+  animation: streak linear infinite;
+  pointer-events: none;
+}
+@keyframes streak {
+  from { transform: translateX(-30vw); opacity: 0; }
+  10% { opacity: 1; }
+  to { transform: translateX(120vw); opacity: 0; }
+}
+
+/* Ship */
+.ship-hover { animation: hover 1.6s ease-in-out infinite; }
+@keyframes hover { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(-1deg); } }
+.flame { animation: flame .12s ease-in-out infinite alternate; transform-origin: left center; transform-box: fill-box; }
+@keyframes flame { from { transform: scaleX(.85); opacity: .85; } to { transform: scaleX(1.15); opacity: 1; } }
+.ship-shake { animation: shake .4s ease-in-out; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px) rotate(-3deg); }
+  40% { transform: translateX(8px) rotate(3deg); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); }
+}
+.recoil { animation: recoil .25s ease-out; }
+@keyframes recoil { 0% { transform: translateX(0); } 30% { transform: translateX(10px); } 100% { transform: translateX(0); } }
+
+/* Meteor */
+.meteor-bob { animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob { 0%,100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
+.meteor-rot { animation: spin 9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.meteor-tail { animation: tail .18s ease-in-out infinite alternate; transform-origin: left center; }
+@keyframes tail { from { transform: translateY(-50%) scaleX(.9); } to { transform: translateY(-50%) scaleX(1.1); } }
+.meteor-burn { animation: burn .9s ease-in forwards; }
+@keyframes burn {
+  0% { filter: brightness(1); transform: scale(1); opacity: 1; }
+  25% { filter: brightness(2.5) sepia(1) saturate(5) hue-rotate(-20deg); transform: scale(1.15); }
+  60% { filter: brightness(.4) sepia(1); transform: scale(.9); opacity: .8; }
+  100% { filter: brightness(0); transform: scale(.2); opacity: 0; }
+}
+.meteor-wrong { animation: wrongShake .5s ease-in-out; }
+@keyframes wrongShake {
+  0%,100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-6px); }
+}
+.meteor-in { animation: meteorIn .6s cubic-bezier(.2,.9,.3,1.2) both; }
+@keyframes meteorIn { from { transform: translateX(-140px) scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+.correct-glow { animation: cglow .6s ease-in-out infinite alternate; }
+@keyframes cglow { from { box-shadow: 0 0 10px 4px rgba(74,222,128,.6); } to { box-shadow: 0 0 30px 12px rgba(74,222,128,.9); } }
+
+/* Laser */
+.laser { transform-origin: right center; animation: laser .45s ease-out forwards; }
+@keyframes laser {
+  0% { transform: translateY(-50%) scaleX(0); opacity: 1; }
+  40% { transform: translateY(-50%) scaleX(1); opacity: 1; }
+  100% { transform: translateY(-50%) scaleX(1); opacity: 0; }
+}
+.muzzle { animation: muzzle .3s ease-out forwards; }
+@keyframes muzzle { from { transform: translate(-50%,-50%) scale(.3); opacity: 1; } to { transform: translate(-50%,-50%) scale(1.6); opacity: 0; } }
+
+/* Angled battle laser (used in shared battle field) */
+.laser-grow { transform-origin: 0 50%; animation: laserGrow .4s ease-out forwards; border-radius: 999px; }
+@keyframes laserGrow {
+  0% { transform: scaleX(0); opacity: 1; }
+  45% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+.pad-btn { transition: transform .08s, filter .15s; }
+.pad-btn:active:not(:disabled) { transform: scale(.9); }
+.pad-btn:disabled { filter: grayscale(.6) brightness(.55); opacity: .4; }
+@keyframes ufoBlink { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* Mobile landscape banner & rotate animation */
+@keyframes rotatePhone {
+  0%,10% { transform: rotate(0deg); }
+  40%,60% { transform: rotate(90deg); }
+  90%,100% { transform: rotate(90deg); }
+}
+.rotate-phone-anim {
+  animation: rotatePhone 2.5s ease-in-out infinite;
+}
+
+/* Explosion */
+.boom-flash { animation: boomFlash .5s ease-out forwards; }
+@keyframes boomFlash { from { transform: translate(-50%,-50%) scale(.2); opacity: 1; } to { transform: translate(-50%,-50%) scale(2.2); opacity: 0; } }
+.boom-ring { animation: boomRing .7s ease-out forwards; }
+@keyframes boomRing { from { transform: translate(-50%,-50%) scale(.2); opacity: 1; border-width: 10px; } to { transform: translate(-50%,-50%) scale(2.8); opacity: 0; border-width: 1px; } }
+.debris { animation: debris .9s ease-out forwards; }
+@keyframes debris {
+  from { transform: translate(-50%,-50%) translate(0,0) scale(1); opacity: 1; }
+  to { transform: translate(-50%,-50%) translate(var(--dx), var(--dy)) scale(.2) rotate(240deg); opacity: 0; }
+}
+.smoke { animation: smoke 1.2s ease-out forwards; }
+@keyframes smoke { from { transform: translate(-50%,-50%) scale(.5); opacity: .8; } to { transform: translate(-50%,-80%) scale(2); opacity: 0; } }
+
+.pop { animation: pop .5s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.float-up { animation: floatUp 1.1s ease-out forwards; }
+@keyframes floatUp { from { transform: translate(-50%, 0); opacity: 1; } to { transform: translate(-50%, -60px); opacity: 0; } }
+.title-glow { text-shadow: 0 0 12px #f0abfc, 0 0 30px #a855f7, 0 4px 0 #581c87; }
+.btn-space {
+  background: linear-gradient(180deg, #a855f7, #6d28d9);
+  box-shadow: 0 6px 0 #3b0764, 0 0 25px rgba(168,85,247,.6);
+  transition: transform .1s;
+}
+.btn-space:active { transform: translateY(4px); box-shadow: 0 2px 0 #3b0764; }
+.panel { background: rgba(15, 10, 45, .75); border: 2px solid rgba(167, 139, 250, .45); backdrop-filter: blur(6px); }
+
+/* Dashboard extras */
+.title-shine {
+  background: linear-gradient(90deg, #fff 0%, #fde047 25%, #f0abfc 50%, #67e8f9 75%, #fff 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 5s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(250,204,21,.6));
+}
+@keyframes shine { to { background-position: 220% center; } }
+
+/* Epic animated title */
+.title-epic {
+  background: linear-gradient(92deg, #ffffff 0%, #bae6fd 12%, #fde047 25%, #f0abfc 40%, #a5b4fc 55%, #fda4af 70%, #fde047 85%, #ffffff 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: titleFlow 7s linear infinite;
+  filter:
+    drop-shadow(0 0 6px rgba(251,191,36,.9))
+    drop-shadow(0 0 18px rgba(232,121,249,.7))
+    drop-shadow(0 0 34px rgba(103,232,249,.5));
+}
+@keyframes titleFlow { to { background-position: 300% center; } }
+
+.title-sub-epic {
+  background: linear-gradient(92deg, #fef08a, #fbbf24, #fb923c, #fde68a);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: titleFlow 4s linear infinite reverse;
+  filter:
+    drop-shadow(0 0 8px rgba(251,146,60,.8))
+    drop-shadow(0 0 22px rgba(251,191,36,.55));
+}
+
+/* Scanline / grid cockpit texture */
+.cockpit-texture::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,0.045) 0px,
+    rgba(255,255,255,0.045) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Mode cards styled like spaceship cockpits */
+.mode-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  transition: transform .22s ease, box-shadow .25s ease, border-color .25s ease;
+  text-align: left;
+}
+.mode-card:hover, .mode-card:focus-visible {
+  transform: translateY(-8px) scale(1.03);
+}
+.mode-card:active { transform: translateY(-2px) scale(1.01); }
+
+.mode-card .corner-bracket {
+  position: absolute;
+  width: 26px; height: 26px;
+  border: 3px solid currentColor;
+  opacity: .85;
+  pointer-events: none;
+}
+.mode-card .cb-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-top-left-radius: 8px; }
+.mode-card .cb-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-top-right-radius: 8px; }
+.mode-card .cb-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-bottom-left-radius: 8px; }
+.mode-card .cb-br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-bottom-right-radius: 8px; }
+
+/* engine glow under the ship preview inside mode card */
+.engine-glow {
+  position: absolute;
+  right: -10%;
+  top: 38%;
+  width: 55%;
+  height: 26%;
+  filter: blur(14px);
+  opacity: .8;
+  pointer-events: none;
+  animation: enginePulse 0.9s ease-in-out infinite alternate;
+}
+@keyframes enginePulse { from { opacity: .55; transform: scaleX(.9);} to { opacity: 1; transform: scaleX(1.08);} }
+
+/* HUD tick decorations on cards */
+.hud-ticks {
+  position: absolute; top: 12px; right: 14px;
+  display: flex; gap: 3px; pointer-events: none;
+}
+.hud-ticks span { width: 4px; border-radius: 1px; background: rgba(255,255,255,.7); animation: hudBlink 1.2s ease-in-out infinite; }
+@keyframes hudBlink { 0%,100% { opacity: .25; height: 5px;} 50% { opacity: 1; height: 12px;} }
+
+/* CTA launch button */
+.launch-btn {
+  position: relative;
+  overflow: hidden;
+  font-weight: 900;
+  letter-spacing: .02em;
+  transition: transform .1s, filter .2s;
+}
+.launch-btn::after {
+  content: '';
+  position: absolute; top: -60%; left: -30%;
+  width: 40%; height: 220%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: rotate(18deg);
+  animation: sweep 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sweep { 0% { left: -40%; } 60%,100% { left: 130%; } }
+.launch-btn:active { transform: translateY(3px); }
+
+/* Ambient dashboard meteors (decorative) */
+.dash-meteor {
+  position: absolute;
+  border-radius: 48% 52% 45% 55% / 52% 46% 54% 48%;
+  background: radial-gradient(circle at 35% 30%, #a8a29e 0%, #57534e 45%, #1c1917 100%);
+  box-shadow: 0 0 18px rgba(251,146,60,.5), inset -6px -8px 14px rgba(0,0,0,.6);
+  animation: dashMeteor linear infinite;
+  pointer-events: none;
+}
+.dash-meteor::after {
+  content: '';
+  position: absolute;
+  left: 70%; top: 40%;
+  width: 260%; height: 26%;
+  border-radius: 0 50% 50% 0 / 0 50% 50% 0;
+  background: radial-gradient(ellipse at 0% 50%, rgba(255,240,180,.85), rgba(251,146,60,.5) 40%, transparent 75%);
+  filter: blur(3px);
+}
+@keyframes dashMeteor {
+  0% { transform: translate(0,0) rotate(0deg); opacity: 0; }
+  8% { opacity: .9; }
+  92% { opacity: .9; }
+  100% { transform: translate(-70vw, 16vh) rotate(140deg); opacity: 0; }
+}
+
+.credit-badge {
+  background: #05030f;
+  border: 2px solid #fde68a;
+  color: #fffbeb;
+  text-shadow: 0 0 8px #fbbf24, 0 1px 0 #000;
+  box-shadow: 0 0 0 3px #1c1917, 0 0 18px rgba(251,191,36,.85);
+  letter-spacing: .04em;
+}
+.fly-by { animation: flyBy linear infinite; will-change: transform; }
+@keyframes flyBy {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-240px); }
+}
+.btn-mode { transition: transform .15s, filter .15s; }
+.btn-mode:hover { transform: translateY(-6px) scale(1.04); filter: brightness(1.08); }
+.btn-mode:active { transform: translateY(2px) scale(.98); }
+
+.timer-range {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 12px; border-radius: 999px; outline: none;
+  background: linear-gradient(90deg, #4ade80, #facc15, #f97316, #ef4444);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.5);
+}
+.timer-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #fff; border: 3px solid #fbbf24;
+  box-shadow: 0 0 12px #fbbf24; cursor: pointer;
+}
+.timer-range::-moz-range-thumb {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #fff; border: 3px solid #fbbf24;
+  box-shadow: 0 0 12px #fbbf24; cursor: pointer;
+}
+.timer-urgent { animation: urgentPulse .4s ease-in-out infinite alternate; }
+@keyframes urgentPulse {
+  from { filter: drop-shadow(0 0 4px #ef4444); }
+  to { filter: drop-shadow(0 0 16px #f87171); transform: scale(1.08); }
+}
+.hero-ring {
+  background: radial-gradient(circle, rgba(168,85,247,.25), transparent 70%);
+  animation: heroPulse 3s ease-in-out infinite;
+}
+@keyframes heroPulse { 0%,100% { opacity: .7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+.spark {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 8px #fff;
+  animation: spark 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes spark { 0%,100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
